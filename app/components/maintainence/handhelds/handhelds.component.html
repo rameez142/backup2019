@@ -1,0 +1,131 @@
+
+        <div class="container">
+
+            <form method="post" enctype="multipart/form-data">
+
+          <header class="pageHeader">
+            <h3><i class="fa fa-handshake-o fa-lg page-caption" aria-hidden="true"></i> HandHeld</h3>
+          </header>
+
+
+                  <dx-data-grid
+                  id="gridContainer"
+                  [dataSource]="dataSource"
+                  [showBorders]="true"
+                  [rtlEnabled]="true"
+                  [hoverStateEnabled]="true"
+                  [selectedRowKeys]="[]"
+                  (onRowRemoved)="RowDelete($event)"
+                  (onToolbarPreparing)="onToolbarPreparing($event)"
+               keyexpr="handheldid"
+                >
+                <dxo-paging   [pageSize]="80"></dxo-paging>
+                <dxo-pager
+                [showPageSizeSelector]="false"
+                [allowedPageSizes]="[10, 50, 100]"
+                [showInfo]="false">
+            </dxo-pager>
+
+            <dxo-editing
+            mode="row"
+            [allowUpdating]="false"
+            [allowDeleting]="false"
+            [allowAdding]="false"
+           >
+
+            </dxo-editing>
+
+            <dxo-selection mode="single"></dxo-selection>
+             <dxo-export [enabled]="true"  fileName="Patrol Cars"></dxo-export>
+            <!-- <dxo-column-chooser [enabled]="true" mode="select"></dxo-column-chooser> -->
+            <dxo-grouping [autoExpandAll]="true"></dxo-grouping>
+            <dxo-filter-row  [visible]="true"></dxo-filter-row>
+
+            <dx-load-panel
+                #loadPanel
+                shadingColor="rgba(0,0,0,0.4)"
+                [position]="{ of: '#gridContainer' }"
+                [(visible)]="loadingVisible"
+                [showIndicator]="true"
+                [showPane]="true"
+                [shading]="true"
+                [closeOnOutsideClick]="false"
+                (onShown)="onShown()">
+            </dx-load-panel>
+            <dxi-column dataField="ahwalname" caption="الأحوال" ></dxi-column>
+              <dxi-column dataField="serial" caption="رقم الجهاز" ></dxi-column>
+              <dxi-column dataField="barcode" caption="رقم الباركود"></dxi-column>
+              <dxi-column dataField="defective" caption="غير صالحة؟"  [allowFiltering]="false"  cellTemplate="defchecktemplate"></dxi-column>
+              <div *dxTemplate="let data of 'defCellTemplate'">
+                        <dx-check-box
+                        [value]="data.value"
+                        ></dx-check-box>
+                    </div>
+                    <dxi-column cellTemplate="btncelltemplate"> </dxi-column>
+    <div *dxTemplate="let data of 'btncelltemplate'">
+
+<i class="fa fa-edit" (click) = 'ShowUpdatePopup($event,data.data)'></i>
+<i class="fa fa-trash" (click)='DelRecord($event,data.rowIndex)'></i>
+
+        </div>
+                </dx-data-grid>
+                <dx-popup
+                class="popup"
+                [width]="600"
+                [height]="500"
+                [showTitle]="false"
+                title=""
+                [showCloseButton]= "true"
+                [dragEnabled]="false"
+                [closeOnOutsideClick]="true"
+                [(visible)]="popupVisible">
+                <div *dxTemplate="let data of 'content'">
+
+                        <table>
+                            <tr>
+                                <td>  <label>رقم الجهاز</label>
+                                </td>
+                                <td>
+                                    <input name="txtserialnumber" [(ngModel)]="pltnumber">
+
+
+                                    </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>رقم الباركود</label>
+                                </td>
+                                <td>
+    <input [(ngModel)]="barcode" name="txtbarcode" />
+                                    </td>
+                            </tr>
+                            <tr>
+
+                                    <td>  <label>غير صالحة؟</label>
+                                      </td>
+                                      <td>
+
+                        <input type="checkbox" id="chkdefective" name="chkdefective"
+                        [ngModel]="defectchk" (ngModelChange)="chkdeftoggle($event)">
+
+
+                                          </td>
+                                  </tr>
+                                  <tr>
+                                    <td>
+
+                            <button (click)="hdntrans === 'I' ? RowAdd($event) :  RowUpdate($event)" data-dismiss="modal" class="btn btn-primary">حفظ</button>
+                            </td>
+                            <td>
+                            <button (click)="ClosePopup()" data-dismiss="modal" class="btn btn-default">إلغاء</button>
+
+                                    </td>
+                                  </tr>
+               </table>
+
+              </div>
+            </dx-popup>
+                    </form>
+
+          </div>
+
